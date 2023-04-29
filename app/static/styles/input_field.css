@@ -1,0 +1,67 @@
+.input_row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 120px;
+}
+
+.input_field {
+    font-family: Arial; 
+    padding-left: 10px;
+    width: 430px;
+    height: 34px;
+    font-size: 16px;
+    border: 1px solid rgb(96 ,96, 96);
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+    box-shadow: inset 1px 2px 3px rgba(0, 0, 0, 0.05);
+}
+
+.input_field:focus  {
+    font-family: Arial; 
+    font-size: 16px;
+    outline: 1px solid transparent;
+    border: 1px solid blue;
+}
+
+.input_field::placeholder {
+    font-family: Arial; 
+    font-size: 16px;
+}
+
+.add_button {
+    height: 34;
+    width: 36px;
+    border: solid rgb(96 ,96, 96);
+    border-width: 1px;
+    border-left-width: 0px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;   
+    cursor: pointer;
+}
+
+.add_button:hover {
+    background-color: rgb(204, 204, 204);
+}
+
+.add_button:active {
+    background-color: rgb(183, 183, 183);
+}
+
+.show_complete_button {
+    margin-left: 10px;
+    height: 34;
+    width: 40;
+    border: solid rgb(96 ,96, 96);
+    border-width: 1px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.show_complete_button:hover {
+    background-color: rgb(204, 204, 204);
+}
+
+.show_complete_button:active {
+    background-color: rgb(183, 183, 183);
+}

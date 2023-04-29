@@ -1,0 +1,58 @@
+.menu_row {
+    position:fixed;
+    top: 0;
+    width: 100%;
+    background-color: white;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    display: grid;
+    grid-template-columns: 4fr 3fr;
+    column-gap: 15px;
+}
+
+.menu_col {
+    column-gap: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+}
+
+h1 {
+    font-family: Fredoka, Arial;
+    font-weight: 500;
+    display: inline-block;     
+    margin-top: 0;
+    margin-bottom: 0;      
+}
+
+.logo {
+    width: 35px;
+    height: 35px;
+}
+
+.menu_button {
+    background-color: white;
+    color: rgba(31, 64, 174);
+    border-style: solid;
+    border-color: rgba(31, 64, 174);
+    border-width: 1px;
+    border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 9px;
+    padding-bottom: 9px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    vertical-align: top;
+    margin-right: 0px;
+}
+
+.menu_button:hover {
+    background-color: rgba(31, 64, 174);
+    color: white;
+}
+
+.menu_button:active {
+    background-color: rgb(24, 50, 137);
+    color: white;   
+}

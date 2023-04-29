@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>To do</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;700&family=Roboto+Slab&family=Roboto:wght@100;400;500;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css">
+        <link rel="stylesheet" href="{{url_for('.static', filename='/styles/menu.css')}}" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="{{url_for('.static', filename='/styles/input_field.css')}}" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="{{url_for('.static', filename='/styles/to_do_list.css')}}" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="{{url_for('.static', filename='/styles/modal.css')}}" rel="stylesheet" type="text/css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <!-- Login -->
+        <div id="id01" class="modal">
+            <form class="modal-content animate" id="login_form">
+                <div class="container">
+                    <label for="uname"><b>Username</b></label>
+                    <input class="login_field" type="text" placeholder="Enter Username" name="uname" required>
+                    <label for="psw"><b>Password</b></label>
+                    <input class="login_field" type="password" placeholder="Enter Password" name="psw" required>
+                    <button class="submit_button" type="submit">Login</button>
+                    <div style="margin-bottom: 6px; color: red;" id="flash_msg"></div>
+                    <label>
+                        <input type="checkbox" checked="checked" name="remember"> Remember me
+                    </label>
+                </div>
+                <div class="container" style="background-color:#f1f1f1">
+                    <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+                    <span class="psw">Don't have an account yet? <a style="cursor: pointer;" onclick="document.getElementById('id01').style.display='none';document.getElementById('id02').style.display='block'">Sign up now</a></span>
+                </div>
+            </form>
+        </div>
+
+        <!-- Register -->
+        <div id="id02" class="modal">
+            <form class="modal-content animate" id="register_form">
+                <div class="container">
+                    <label for="uname"><b>Username</b></label>
+                    <input class="login_field" type="text" placeholder="Enter Username" name="uname" required>
+                    <label for="psw"><b>Password</b></label>
+                    <input class="login_field" type="password" placeholder="Enter Password" name="psw" required>
+                    <button class="submit_button" type="submit">Register</button>
+                    <label>
+                        <div style="margin-bottom: 6px; color: red;" id="flash_msg"></div>
+                    </label>
+                </div>
+                <div class="container" style="background-color:#f1f1f1">
+                    <button type="button" onclick="document.getElementById('id02').style.display='none'" class="cancelbtn">Cancel</button>
+                    <span class="psw">Already have an account? <a style="cursor: pointer;" onclick="document.getElementById('id02').style.display='none';document.getElementById('id01').style.display='block'">Login now</a></span>
+                </div>
+            </form>
+        </div>
+
+        <!-- Menu -->
+        <div class="menu_row">
+            <div class="menu_col">
+                <img class="logo" src="{{ url_for('serve_logo') }}">
+                <h1>To-Do List</h1>
+            </div>
+            <div class="menu_col">
+                {% if session['account'] == "" %}
+                <button id="login" class="menu_button" onclick="document.getElementById('id01').style.display='block'">Login</button>
+                <button id="login" class="menu_button" onclick="document.getElementById('id02').style.display='block'">Register</button>
+                {% else %}
+                <p id="welcome"  style="margin-top: 7px; margin-bottom: 0px;">Welcome {{session['account']}}</p>
+                <button id="logout" class="menu_button" onclick="location.href='/logout';">Logout</button>
+                {% endif %}
+                <div style="margin-right: 10px;"></div>         
+            </div>
+        </div>
+
+        <!-- Input field -->
+        <div class="input_row">
+            <input class="input_field" type="text" placeholder="Add New Task">
+            <button class="add_button">+</button>
+        </div>
+
+        <!-- To do list -->
+        <div class="to_do_list">
+            {% for task in all_tasks %}
+            <div class="to_do_list_row" id="{{task.id}}">
+                {% if task.status == 0 %}
+                <p class="task_text">{{task.desc}}</p>
+                {% else %}
+                <p class="task_text" style="text-decoration: line-through;">{{task.desc}}</p>
+                {% endif %}
+                <button class="done_button">&#x2713;</button>
+                <button class="remove_button"><span class='glyphicon glyphicon-trash'></span></button>
+            </div>
+            {% endfor %}
+        </div>
+        <script>
+            // Code for add task
+            var no_account_task_id = 0 ;
+            function get_input_field() {
+                let input_field = document.querySelector('.input_field') ;
+                const value = input_field.value ;
+                input_field.value = "" ;
+                return value ;
+            }
+
+            function add_to_front_end( desc, status, id ) {
+                let row = document.createElement("div");
+                row.className = "to_do_list_row";
+                row.id = id ;
+                let paragraph= document.createElement("p") ;
+                paragraph.textContent = desc ;
+                paragraph.className = "task_text" ;
+                addModifyParagraphEventListener(paragraph);
+                let done_button = document.createElement("button");
+                done_button.className = "done_button" ;
+                done_button.innerHTML = "&#x2713;" ;
+                addCompleteButtonEventListener(done_button);
+                let remove_button = document.createElement("button");
+                remove_button.className = "remove_button" ;
+                remove_button.innerHTML = "<span class='glyphicon glyphicon-trash'></span>" ;
+                addRemoveButtonEventListener(remove_button) ;
+                row.appendChild(paragraph) ;
+                row.appendChild(done_button) ;
+                row.appendChild(remove_button) ;
+                document.querySelector(".to_do_list").append(row) ;
+            }
+
+            function add_to_back_end () {
+                const description = get_input_field() ;
+                if ("{{session['account']}}" != "") {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', '/add');
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                    xhr.onload = function() {
+                        const response = JSON.parse(xhr.responseText);
+                        if (xhr.status == 200) {
+                            add_to_front_end( description, 0, response.id ) ;
+                        }
+                    };
+                    xhr.send(JSON.stringify({description}));
+                }
+                else
+                    add_to_front_end( description, 0, no_account_task_id++ ) ;
+            };
+
+            document.querySelector('.add_button').addEventListener('click', function(event) {
+                event.preventDefault();
+                add_to_back_end();
+            });
+
+            document.querySelector('.input_field').addEventListener("keydown", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    add_to_back_end();
+                }
+            });
+
+            // Code for remove task
+            function remove_from_front_end( id ) {
+                const row = document.getElementById(id) ;
+                row.parentNode.removeChild(row);
+            }
+
+            function remove_from_back_end( id ) {
+                if ("{{session['account']}}" != "") {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', '/delete/'+id);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                    xhr.onload = function() {
+                        if (xhr.status == 200) {
+                            remove_from_front_end( id ) ;
+                        }
+                    };
+                    xhr.send();
+                }
+                else {
+                    remove_from_front_end( id ) ;
+                }
+            };
+
+            function addRemoveButtonEventListener(button) {
+                button.addEventListener("click", function(event) {
+                    const id = button.parentNode.id ;
+                    event.preventDefault();
+                    remove_from_back_end(id);
+                });
+            }
+
+            document.querySelectorAll('.remove_button').forEach( function(button) {
+                addRemoveButtonEventListener(button) ;
+            });       
+
+            // Code for complete task
+            function complete_from_front_end( id ) {
+                row = document.getElementById(id) ;
+                paragraph = row.getElementsByTagName("p")[0] ;
+                if( paragraph.style.textDecoration == 'line-through')
+                    paragraph.style.textDecoration = "" ;
+                else
+                    paragraph.style.textDecoration = "line-through" ;
+            }
+
+            function complete_from_back_end( id ) {
+                if ("{{session['account']}}" != "") {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', '/complete/'+id);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                    xhr.onload = function() {
+                        if (xhr.status == 200) {
+                            complete_from_front_end( id ) ;
+                        }
+                    };
+                    xhr.send();
+                }
+                else {
+                    complete_from_front_end( id ) ;
+                }
+            };
+
+            function addCompleteButtonEventListener(button) {
+                button.addEventListener("click", function(event) {
+                    const id = button.parentNode.id ;
+                    event.preventDefault();
+                    complete_from_back_end(id);
+                });
+            }
+
+            document.querySelectorAll('.done_button').forEach( function(button) {
+                addCompleteButtonEventListener(button);
+            });   
+
+            // Code for modifications
+            function update_from_back_end( id, new_desc ) {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/update/'+id);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify({new_desc}));
+            };
+
+            function addModifyParagraphEventListener(paragraph) {
+                paragraph.addEventListener('blur', function() {
+                    paragraph.contentEditable = false;
+                });
+
+                paragraph.addEventListener('click', function() {
+                    paragraph.contentEditable = true;
+                    paragraph.focus();
+                });
+                
+                paragraph.addEventListener("keydown", function(event) {
+                    if (event.key === "Enter") {
+                        event.preventDefault();
+                        paragraph.blur();
+                    }
+                });
+
+                if ("{{session['account']}}" != "") {
+                    paragraph.addEventListener("blur", function() {
+                        id = paragraph.parentNode.id ;
+                        new_desc = paragraph.textContent ;
+                        update_from_back_end( id, new_desc ) ;
+                    });
+                }
+            }
+
+            document.querySelectorAll('.task_text').forEach( function(paragraph) {
+                addModifyParagraphEventListener( paragraph ) ;
+            });
+        </script>
+        <script>
+            const modal1 = document.getElementById('id01');
+            const modal2 = document.getElementById('id02');
+            window.onclick = function(event) {
+                if (event.target == modal1 || event.target == modal2) {
+                    modal1.style.display = "none";
+                    modal2.style.display = "none";
+                }
+            }
+
+            const loginForm = document.querySelector('#login_form');
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const account = loginForm.querySelector('[name="uname"]').value;
+                const password = loginForm.querySelector('[name="psw"]').value;
+                const remember = loginForm.querySelector('[name="remember"]').checked;
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/login');
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onload = function() {
+                    if (xhr.status == 200) {
+                        loginForm.querySelector('#flash_msg').textContent = "" ;
+                        window.location.href = '/';
+                    } else {
+                        loginForm.querySelector('#flash_msg').textContent = "Incorrect username or password" ;
+                    }
+                };
+                xhr.send(JSON.stringify({ account, password, remember }));
+            });
+
+            const registerForm = document.querySelector('#register_form');
+            registerForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const account = registerForm.querySelector('[name="uname"]').value;
+                const password = registerForm.querySelector('[name="psw"]').value;
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/register');
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onload = function() {
+                    if (xhr.status == 200) {
+                        registerForm.querySelector('#flash_msg').textContent = "" ;
+                        window.location.href = '/';
+                    } else {
+                        registerForm.querySelector('#flash_msg').textContent = "Account taken or invalid format" ;
+                    }
+                };
+                xhr.send(JSON.stringify({ account, password }));
+            });
+        </script>
+    </body>
+</html>
